@@ -1,0 +1,39 @@
+{
+  "min_packer_version": "1.6.2",
+  "variables": {
+    "aws_region": "ap-southeast-1",
+  },
+  "builders": [{
+    "ami_name": "kafka-amazon-linux-{{uuid}}-{{isotime | clean_resource_name}}",
+    "ami_description": "An Amazon Linux AMI that has Kafka installed.",
+    "instance_type": "t2.nano",
+    "name": "amazon-linux-kafka-ami",
+    "region": "{{user `aws_region`}}",
+    "type": "amazon-ebs",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "amzn-ami-hvm-*-x86_64-gp2",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": ["change-it"],
+      "most_recent": true
+    },
+    "ssh_username": "ec2-user"
+  }],
+  "provisioners": [{
+    "type": "shell-local",
+    "command": "{{template_dir}}/sample_kafka_script_if_there_is_any.sh"
+  }, {
+    "type": "file",
+    "source": "{{template_dir}}/config",
+    "destination": "/tmp"
+  }, {
+    "type": "shell",
+    "only": ["amazon-linux-kafka-ami"],
+    "inline": "sudo yum update -y && sudo yum install -y awscli jq curl",
+    "pause_before": "30s"
+  }]
+}
