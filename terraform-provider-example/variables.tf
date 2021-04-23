@@ -8,15 +8,15 @@ variable "private_key" {
 }
 
 variable "ami_image" {
-  default = "ami-03ca998611da0fe12"
+  default = "this is the image name built by packer"
 }
 
 variable "ami_default_user" {
-  default = "ec2-user"
+  default = ""
 }
 
 variable "instance_flavor" {
-  default = "t2.nano"
+  default = ""
 }
 
 variable "keypair_name" {
